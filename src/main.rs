@@ -7,8 +7,8 @@ use cheats::approaching::Hint;
 use cheats::positioning::Position;
 use cheats::TeamColors;
 
-const CAR: Color = Color::Red;
-const TARGET: Color = Color::Blue;
+const CAR: Color = Color::BLUE;
+const TARGET: Color = Color::GREEN;
 
 #[allow(unused)]
 struct MapState {
