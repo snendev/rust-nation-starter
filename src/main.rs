@@ -65,10 +65,14 @@ impl State {
         drone: &mut Camera,
         motor: &mut MotorSocket,
         wheels: &mut WheelOrientation,
+        map_state: &MapState,
     ) -> eyre::Result<()> {
         match self {
             State::Turning => loop {
-                unimplemented!()
+                motor.move_for(Velocity::backward(), 0.1);
+                wheels.set(Angle::right());
+                motor.move_for(Velocity::forward(), 0.1);
+                wheels.set(Angle::straight());
             },
             State::Approaching => {
                 let hint = cheats::approaching::auto(
