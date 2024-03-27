@@ -1,4 +1,5 @@
 mod cheats;
+use cheats::internal::infer;
 
 use hs_hackathon::prelude::*;
 
@@ -7,8 +8,13 @@ use cheats::approaching::Hint;
 use cheats::positioning::Position;
 use cheats::TeamColors;
 
-const CAR: Color = Color::BLUE;
-const TARGET: Color = Color::GREEN;
+const CAR: Color = Color::Blue;
+const TARGET: Color = Color::Green;
+
+const TEAM_COLORS: TeamColors = TeamColors {
+    car: CAR,
+    target: TARGET,
+};
 
 #[allow(unused)]
 struct MapState {
