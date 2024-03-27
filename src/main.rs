@@ -87,10 +87,9 @@ impl State {
                 // this must be compared to the vector between car and target
                 let car_to_target = Vector::from((map_state_after.car, map_state_after.target));
                 let orientation_correction_angle = orientation.angle(car_to_target);
-                let angle = if orientation_correction_angle.is_sign_positive() {
-                    Angle::right()
-                } else if orientation_correction_angle.is_sign_negative() {
-                    Angle::left()
+
+                let angle = if orientation_correction_angle.abs() > 0.01 {
+                    Angle::try_from(orientation_correction_angle as f32 / 5.)?
                 } else {
                     Angle::straight()
                 };
