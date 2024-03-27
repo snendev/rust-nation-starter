@@ -27,12 +27,12 @@ struct MapState {
 #[allow(unused)]
 impl MapState {
     pub async fn infer(drone: &mut Camera) -> eyre::Result<Self> {
-        infer(&TEAM_COLORS, drone).await.map(|(car_bbox, target_bbox)| {
-            Self {
+        infer(&TEAM_COLORS, drone)
+            .await
+            .map(|(car_bbox, target_bbox)| Self {
                 car: car_bbox.into(),
                 target: target_bbox.into(),
-            }
-        })
+            })
     }
 
     async fn car_orientation(
@@ -69,12 +69,21 @@ impl State {
         wheels: &mut WheelOrientation,
     ) -> eyre::Result<()> {
         match self {
-            State::Turning => loop {
+            State::Turning => {
+                // get the start position
+                // move backward a little
+                // get the next position
+                let map_state_before = MapState::infer(drone).await?;
                 motor.move_for(Velocity::backward(), Duration::from_secs_f32(0.1));
+                let map_state_after = MapState::infer(drone).await?;
+
+                let orientation =
+                    MapState::car_orientation(map_state_before.car, drone, motor, wheels).await?;
+
                 wheels.set(Angle::right());
                 motor.move_for(Velocity::forward(), Duration::from_secs_f32(0.1));
                 wheels.set(Angle::straight());
-            },
+            }
             State::Approaching => {
                 let hint = cheats::approaching::auto(
                     &TeamColors {
