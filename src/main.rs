@@ -78,7 +78,7 @@ impl State {
                 // move backward a little
                 // get the next position
                 let map_state_before = MapState::infer(drone).await?;
-                motor.move_for(Velocity::backward(), Duration::from_secs_f32(0.1));
+                motor.move_for(Velocity::backward(), Duration::from_secs_f32(1.)).await?;
                 let map_state_after = MapState::infer(drone).await?;
 
                 // orientation represents the "forward" vector for the car
@@ -94,9 +94,9 @@ impl State {
                 } else {
                     Angle::straight()
                 };
-                wheels.set(angle);
-                motor.move_for(Velocity::forward(), Duration::from_secs_f32(0.1));
-                wheels.set(Angle::straight());
+                wheels.set(angle).await?;
+                motor.move_for(Velocity::forward(), Duration::from_secs_f32(1.)).await?;
+                wheels.set(Angle::straight()).await?;
             }
             State::Approaching => {
                 let hint = cheats::approaching::auto(
