@@ -1,4 +1,6 @@
 mod cheats;
+use std::time::Duration;
+
 use cheats::internal::infer;
 
 use hs_hackathon::prelude::*;
@@ -69,9 +71,9 @@ impl State {
     ) -> eyre::Result<()> {
         match self {
             State::Turning => loop {
-                motor.move_for(Velocity::backward(), 0.1);
+                motor.move_for(Velocity::backward(), Duration::from_secs_f32(0.1));
                 wheels.set(Angle::right());
-                motor.move_for(Velocity::forward(), 0.1);
+                motor.move_for(Velocity::forward(), Duration::from_secs_f32(0.1));
                 wheels.set(Angle::straight());
             },
             State::Approaching => {
