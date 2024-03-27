@@ -67,7 +67,6 @@ impl State {
         drone: &mut Camera,
         motor: &mut MotorSocket,
         wheels: &mut WheelOrientation,
-        map_state: &MapState,
     ) -> eyre::Result<()> {
         match self {
             State::Turning => loop {
