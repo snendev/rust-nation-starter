@@ -36,12 +36,10 @@ impl MapState {
     }
 
     async fn car_orientation(
-        current: Position,
-        drone: &mut Camera,
-        motor: &mut MotorSocket,
-        wheels: &mut WheelOrientation,
+        previous_pos: &MapState,
+        current: &MapState,
     ) -> eyre::Result<Vector> {
-        unimplemented!()
+        Ok(Vector::from((current.car, previous_pos.car)))
     }
 }
 
@@ -61,6 +59,12 @@ enum State {
     Idle,
 }
 
+enum Direction {
+    Left,
+    Right,
+    Straight,
+}
+
 impl State {
     async fn execute(
         &mut self,
@@ -77,10 +81,20 @@ impl State {
                 motor.move_for(Velocity::backward(), Duration::from_secs_f32(0.1));
                 let map_state_after = MapState::infer(drone).await?;
 
+                // orientation represents the "forward" vector for the car
                 let orientation =
-                    MapState::car_orientation(map_state_before.car, drone, motor, wheels).await?;
-
-                wheels.set(Angle::right());
+                    MapState::car_orientation(&map_state_before, &map_state_after).await?;
+                // this must be compared to the vector between car and target
+                let car_to_target = Vector::from((map_state_after.car, map_state_after.target));
+                let orientation_correction_angle = orientation.angle(car_to_target);
+                let angle = if orientation_correction_angle.is_sign_positive() {
+                    Angle::right()
+                } else if orientation_correction_angle.is_sign_negative() {
+                    Angle::left()
+                } else {
+                    Angle::straight()
+                };
+                wheels.set(angle);
                 motor.move_for(Velocity::forward(), Duration::from_secs_f32(0.1));
                 wheels.set(Angle::straight());
             }
