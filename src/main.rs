@@ -25,7 +25,12 @@ struct MapState {
 #[allow(unused)]
 impl MapState {
     pub async fn infer(drone: &mut Camera) -> eyre::Result<Self> {
-        unimplemented!()
+        infer(&TEAM_COLORS, drone).await.map(|(car_bbox, target_bbox)| {
+            Self {
+                car: car_bbox.into(),
+                target: target_bbox.into(),
+            }
+        })
     }
 
     async fn car_orientation(
