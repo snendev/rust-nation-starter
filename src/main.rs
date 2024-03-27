@@ -91,7 +91,8 @@ impl State {
                 let angle = if orientation_correction_angle.abs() > 0.01 {
                     Angle::try_from(orientation_correction_angle as f32 / 5.)?
                 } else {
-                    Angle::straight()
+                    *self = Self::Approaching;
+                    return Ok(());
                 };
                 wheels.set(angle).await?;
                 motor.move_for(Velocity::forward(), Duration::from_secs_f32(1.)).await?;
